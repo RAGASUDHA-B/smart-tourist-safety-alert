@@ -74,7 +74,7 @@ class _AuthScreenState extends State<AuthScreen> {
             'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?fit=crop&w=900&q=60',
             fit: BoxFit.cover,
           ),
-          Container(color: Colors.black45), // dark overlay for text readability
+          Container(color: Colors.black45),
           SingleChildScrollView(
             padding: const EdgeInsets.all(25),
             child: Column(
@@ -84,7 +84,7 @@ class _AuthScreenState extends State<AuthScreen> {
                 Text(
                   isLogin ? "Login" : "Sign Up",
                   style: const TextStyle(
-                      fontSize: 32, color: Colors.white, fontWeight: FontWeight.bold),
+                      fontSize: 32, color: Colors.black38, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 40),
                 TextField(
@@ -189,17 +189,17 @@ class _HomeScreenState extends State<HomeScreen> {
     {
       'name': 'Taj Mahal',
       'image':
-          'https://images.unsplash.com/photo-1509228627152-2f21e63aa8c7?fit=crop&w=400&q=60'
+          'https://lh3.googleusercontent.com/gps-cs-s/AG0ilSwoRr9KgqAp14R-yQU49Iq9B-934GNRZU6j7QY-lSchmvB5NkZBpDlX4u89d4FrHX2Z3DqxoI7wKaI5Cad8dEuV2ZSSPES_g_v0h60qJd2hrfzzruq2So-hLDqw1qdz64Nnehj8=s1360-w1360-h1020-rw'
     },
     {
       'name': 'India Gate',
       'image':
-          'https://images.unsplash.com/photo-1549887534-07a1a5cde434?fit=crop&w=400&q=60'
+          'https://lh3.googleusercontent.com/gps-cs-s/AG0ilSwYdxEa-hDt4R_f54KmqIkjrXKO8zwJIOlGRNq_m-kqIXYzbM90y1BbMv5eV6_Soq9O9wMPjLZ3zDXFZonkuWChFzhRIR0gg8YwS_cGsiuwFcy0DdPBWsZ4qYjXNLgRErv93GarpQ=w270-h312-n-k-no'
     },
     {
       'name': 'Gateway of India',
       'image':
-          'https://images.unsplash.com/photo-1505691723518-34c9c2ef111d?fit=crop&w=400&q=60'
+          'https://lh3.googleusercontent.com/gps-cs-s/AG0ilSw9Am6ixdYCO61pHjCen5uUFcvp_Tu4nyNrdFxrvTRWr4XPRmPYapag5XDZKkCLYsH-OJHzvVgEtiY2d5xORZV5rHeGNwWHyq7oWoy_jkrfjoI5EpJ-n9oeGFJOfQrO7iN0mp6c=w243-h174-n-k-no-nu'
     },
   ];
 
@@ -220,8 +220,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'name': 'John Smith',
         'position': 'Police Commissioner',
         'contact': '+91-1234567890',
-        'image':
-            'https://randomuser.me/api/portraits/men/1.jpg'
+        'image': 'https://randomuser.me/api/portraits/men/1.jpg'
       }
     ],
     'Mumbai': [
@@ -229,8 +228,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'name': 'Rita Sharma',
         'position': 'Emergency Officer',
         'contact': '+91-9876543210',
-        'image':
-            'https://randomuser.me/api/portraits/women/2.jpg'
+        'image': 'https://randomuser.me/api/portraits/women/2.jpg'
       }
     ],
   };
@@ -282,7 +280,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.pushReplacement(
                     context, MaterialPageRoute(builder: (_) => const AuthScreen()));
               },
-              icon: const Icon(Icons.logout))
+              icon: const Icon(Icons.logout)),
+          // ---------------- Language Selector ----------------
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.language),
+            onSelected: changeLanguage,
+            itemBuilder: (context) => [
+              const PopupMenuItem(value: 'en', child: Text('English')),
+              const PopupMenuItem(value: 'ta', child: Text('தமிழ்')),
+              const PopupMenuItem(value: 'hi', child: Text('हिन्दी')),
+              const PopupMenuItem(value: 'fr', child: Text('Français')),
+            ],
+          )
         ],
       ),
       body: Stack(
@@ -367,6 +376,51 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   );
                 }).toList(),
+
+                // ---------------- Authorities Info ----------------
+                if (authorities.isNotEmpty)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(height: 15),
+                      Text(
+                        t['emergency'] ?? 'Emergency Contacts',
+                        style: const TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      const SizedBox(height: 10),
+                      SizedBox(
+                        height: 120,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: authorities.entries.expand((entry) {
+                            return entry.value.map((auth) {
+                              return Card(
+                                color: Colors.white70,
+                                margin: const EdgeInsets.symmetric(horizontal: 5),
+                                child: SizedBox(
+                                  width: 150,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      CircleAvatar(
+                                        backgroundImage: NetworkImage(auth['image']!),
+                                        radius: 30,
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Text(auth['name']!, textAlign: TextAlign.center),
+                                      Text(auth['position']!, style: const TextStyle(fontSize: 12)),
+                                      Text(auth['contact']!, style: const TextStyle(fontSize: 12)),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            });
+                          }).toList(),
+                        ),
+                      ),
+                    ],
+                  ),
                 const SizedBox(height: 80),
               ],
             ),
@@ -493,4 +547,6 @@ class RiskInfoScreen extends StatelessWidget {
     );
   }
 }
+
+
 
